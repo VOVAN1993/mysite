@@ -5,7 +5,7 @@ from novajoy.models import RSSFeed,Collection,Account,PostLetters,RSSItem
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('username', 'last_name', 'first_name','is_staff', 'is_active')
 
-admin.site.unregister(User)
+# admin.site.unregister(User)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(RSSFeed)
 admin.site.register(Collection)

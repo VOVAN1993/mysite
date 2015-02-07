@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
-from django.contrib.auth.models import User, UserManager
+from django.contrib.auth.models import User, UserManager, AbstractUser
 from django.contrib.auth.models import BaseUserManager
 from django.utils import timezone
 
 #manager for user creating
 class MyUserManager(BaseUserManager):
 
-    def create_user(self, username, email=None, password=None,age=None, **extra_fields):
+    def create_user(self, username, email=None, password=None, **extra_fields):
         """
         Creates and saves a User with the given username, email and password.
         """
@@ -15,7 +15,7 @@ class MyUserManager(BaseUserManager):
         if not username:
             raise ValueError('The given username must be set')
         email = UserManager.normalize_email(email)
-        user = self.model(username=username,email=email,age=age,
+        user = self.model(username=username,email=email,
                           is_staff=False, is_active=True, is_superuser=False,
                           last_login=now, date_joined=now, **extra_fields)
 
@@ -23,19 +23,20 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password,age, **extra_fields):
-        u = self.create_user(username, email, password,age, **extra_fields)
+    def create_superuser(self, username, email, password, **extra_fields):
+        u = self.create_user(username, email, password, **extra_fields)
         u.is_staff = True
         u.is_active = True
         u.is_superuser = True
         u.save(using=self._db)
         return u
 
-class Account(User):
+class Account(AbstractUser):
     is_staff = False
-    age = models.PositiveSmallIntegerField(null=False, blank=True)
+    # age = models.PositiveSmallIntegerField(null=False, blank=True, default=12)
     resetKey = models.CharField(max_length=50,null=True)
     objects = MyUserManager()
+
 
     def __unicode__(self):
         return self.username

@@ -5,5 +5,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'mysite.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^$', views.hello, name='hello'),
+    url(r'^accounts/', include('registration.backends.default.urls')),
+
 
 )
