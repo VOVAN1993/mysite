@@ -44,19 +44,19 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-SEND_ACTIVATION_EMAIL=False
+# SEND_ACTIVATION_EMAIL=False
 ACCOUNT_ACTIVATION_DAYS = 3
 REGISTRATION_AUTO_LOGIN = True
 AUTH_USER_MODEL = 'novajoy.Account'
 ROOT_URLCONF = 'mysite.urls'
-LANGUAGE_CODE = 'ru-RU'  # для русской локали
+LANGUAGE_CODE = 'ru-RU'
 USE_I18N = True
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -92,5 +92,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
-# TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'novajoy/templates')]
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'novajoy/templates')]
+
+
+import os
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(os.path.dirname(__file__),'static').replace('\\','/'),
+    #"templates/static",
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
 
