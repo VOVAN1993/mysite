@@ -1,14 +1,20 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from novajoy.my import RegBackend
-from novajoy.views import hello, addCollection, viewCollection
+from novajoy.views import hello, addCollection, viewCollection, deleteCollection, addRSS, viewURL
 
 urlpatterns = patterns('',
+    url(r'^dasha/', include('dashaFilms.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^novajoy/', include('novajoy.urls')),
     url(r'^hello/', hello),
     url(r'^$',viewCollection),
     url(r'^addCollection/$',addCollection),
+    url(r'^deleteCollection/$',deleteCollection),
+    url(r'^addRSS/$',addRSS),
+    url(r'^$',viewCollection),
+    url(r'^selectURL/$',viewURL),
+
     url(r'^accounts/register/$',
                            RegBackend.as_view(),
                            name='registration_register'),

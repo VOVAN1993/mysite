@@ -38,7 +38,7 @@ class Account(AbstractUser):
     objects = MyUserManager()
 
 
-    def __unicode__(self):
+    def __str__(self):
         return self.username
 
 class PostLetters(models.Model):
@@ -47,7 +47,7 @@ class PostLetters(models.Model):
     body = models.TextField(null=False, blank=True)
     attachment = models.TextField(null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.target
 
 class Collection(models.Model):
@@ -59,7 +59,7 @@ class Collection(models.Model):
     last_update_time = models.DateTimeField(null=False,blank=True)
     # sendingTime = models.TimeField(null=False, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name_collection
 
 class RSSFeed(models.Model):
@@ -68,9 +68,8 @@ class RSSFeed(models.Model):
     pubDate = models.DateTimeField(null=False, blank=True)
     spoiled = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return self.url
-
+    def __str__(self):
+       return self.url
 class RSSItem(models.Model):
     rssfeed = models.ForeignKey(RSSFeed,null=True, blank=True)
     title = models.CharField(max_length=222,null=True, blank=True)
@@ -79,6 +78,6 @@ class RSSItem(models.Model):
     author = models.CharField(max_length=30,null=True, blank=True)
     pubDate = models.DateTimeField(null=False, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 

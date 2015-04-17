@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'registration',
     'novajoy',
+    'dashaFilms',
 )
 
 MIDDLEWARE_CLASSES = (
