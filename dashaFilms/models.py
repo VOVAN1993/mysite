@@ -4,13 +4,14 @@ from django.contrib.auth.models import User, UserManager, AbstractUser
 from django.utils.encoding import python_2_unicode_compatible
 
 class Genre(models.Model):
-    title = models.CharField(max_length=30, null=False, blank=False)
+    name = models.CharField(max_length=300, null=False, blank=False)
+    name_rus = models.CharField(max_length=300, null=False, blank=False, default="N/A")
 
     def natural_key(self):
-        return self.title
+        return self.name
 
     def __unicode__(self):
-        return self.title
+        return self.name
 
 class Actor(models.Model):
     name = models.CharField(max_length=30, null=False, blank=False)
