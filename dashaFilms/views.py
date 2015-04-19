@@ -170,6 +170,10 @@ def getFilmByRusName(request, rus_name):
     # ret = json.dumps(results).__str__()
     return HttpResponse(results)
 
+def getFilmByCountry(request, country):
+    filtered = Film.objects.filter(country__name=country).exclude(poster_link__isnull=True)[:10]
+    results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in filtered]
+    return HttpResponse(results)
 
 def getFilmsByActor(request, actor_name):
     try:
