@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'django://'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -39,13 +41,15 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'registration',
     'novajoy',
-    'dashaFilms',
+    'dashaFilms'
+    # 'djcelery',
+    # 'kombu.transport.django',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -69,7 +73,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        'NAME': 'novajoy',
+        'NAME': 'main',
         'USER': 'root',
         'PASSWORD': '080793',
     }

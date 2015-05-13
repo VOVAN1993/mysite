@@ -9,9 +9,11 @@ import feedparser
 # Create your views here.
 from django.template import loader, RequestContext
 from novajoy.models import Account, Collection, RSSFeed
+from novajoy.tasks import add
 
 
 def isAuth(user):
+
     if user.username=="novajoyUser":
         return False
     return user.is_authenticated()
@@ -117,4 +119,5 @@ def addRSS(request):
         return HttpResponse(response)
 
 def hello(request):
+    add.delay(2+2)
     return HttpResponse("asd")

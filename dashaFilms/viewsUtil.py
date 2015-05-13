@@ -1,4 +1,5 @@
 from dashaFilms.models import *
+import time
 
 
 def getGenres(names):
@@ -6,12 +7,12 @@ def getGenres(names):
     for genre in names:
         genre = genre.strip()
         if genre == 'N/A': continue
-        if len(Genre.objects.filter(title=genre)) == 0:
-            dbGenre = Genre(title=genre)
+        if len(Genre.objects.filter(name=genre)) == 0:
+            dbGenre = Genre(name=genre)
             dbGenre.save()
             returnGenres.append(dbGenre)
         else:
-            returnGenres.append(Genre.objects.get(title=genre))
+            returnGenres.append(Genre.objects.get(name=genre))
     return returnGenres
 
 
@@ -56,6 +57,11 @@ def getCountries(countries):
             returnCountries.append(Country.objects.get(name=country))
     return returnCountries
 
+def getFilm(_pk):
+    try:
+        return Film.objects.get(pk = _pk)
+    except Film.DoesNotExist:
+        return None
 def createFilm(dbName, dbName_rus, dbTitle, dbTitle_rus, dbTime, dbYear, dbImbdRating, dbImbdID, dbPoster, dbGenres, dbActors, dbDirectors,
                dbCountries):
     if len(Film.objects.filter(name = dbName, imbdID = dbImbdID)) != 0 :
@@ -75,3 +81,34 @@ def createFilm(dbName, dbName_rus, dbTitle, dbTitle_rus, dbTime, dbYear, dbImbdR
     for country in dbCountries:
         film.country.add(country)
     film.save()
+
+def check_and_unlikeComment(user, _pk):
+    if len(user.likedComments.filter(pk=_pk))==1:
+        com = user.likedComments.get(pk=_pk)
+        com.like-=1
+        user.likedComments.remove(com)
+
+def check_and_undislikeComment(user, _pk):
+    if len(user.dislikedComments.filter(pk=_pk))==1:
+        com = user.dislikedComments.get(pk=_pk)
+        com.dislike-=1
+        user.dislikedComments.remove(com)
+
+def setRaiting(_user,_film,_value):
+    ratings = MyRating.objects.filter(user = _user)
+    for rating in ratings:
+        if rating.film.pk == _film.pk :
+            rating.delete()
+            summ = _film.estim_num*_film.estim_mid
+            _film.estim_num-=1
+            _film.estim_mid= (summ-int(rating.value.values))/_film.estim_num
+            break
+
+    r = MyRating(value = _value, user = _user, film = _film, timestamp = int(round(time.time() * 1000)))
+    r.save()
+
+    summ = _film.estim_mid*_film.estim_num
+    _film.estim_num+=1
+    _film.estim_mid = (summ+int(_value.values))/_film.estim_num
+
+    _film.save()
