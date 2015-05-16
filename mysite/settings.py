@@ -40,12 +40,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'registration',
-    'novajoy',
-    'dashaFilms',
-    'djcelery',
-    'kombu.transport.django',
+    'novajoy'
+    # 'dashaFilms'
+    # 'djcelery',
+    # 'kombu.transport.django',
 )
-
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,10 +75,10 @@ EMAIL_USE_TLS = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'main',
         'USER': 'root',
-        'PASSWORD': '080793',
+        'PASSWORD': '',
     }
 }
 
@@ -100,17 +99,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'novajoy/templates')]
 
 
-import os
-# Additional locations of static files
+_PATH = os.path.abspath(os.path.dirname(__file__))
+
+MEDIA_ROOT = os.path.join(_PATH, 'files', 'media')
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = os.path.join(_PATH, 'files', 'static')
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(os.path.dirname(__file__),'static').replace('\\','/'),
-    #"templates/static",
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(_PATH, 'static'),
 )
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 

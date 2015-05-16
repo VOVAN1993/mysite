@@ -66,7 +66,9 @@ def deleteCollection(request):
     user = Account.objects.get(username=request.user.username)
     collection = Collection.objects.get(user=user,name_collection=request.POST['nameCollection'])
     rss = RSSFeed.objects.filter(collection=collection)
-    #for _rss in rss:
+    for _rss in rss:
+        if len(_rss.collection.all()) == 1 :
+            _rss.delete()
 
     collection.delete()
 
