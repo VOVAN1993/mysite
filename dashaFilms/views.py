@@ -16,28 +16,28 @@ def aa(request):
 def getFilm(request, name):
     try:
         film = Film.objects.get(name=name)
-        st = serializers.serialize('json', [film, ], use_natural_keys=True)
-        return HttpResponse(st)
+        # st = serializers.serialize('json', [film, ], use_natural_keys=True)
+        return HttpResponse(film.as_json().__str__())
     except Film.DoesNotExist:
         return HttpResponse("{response:False}")
 
 
 def getFilmByRusName(request, rus_name):
-    filtered = Film.objects.filter(name_rus=rus_name)
-    results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in filtered]
+    film = Film.objects.filter(name_rus=rus_name)
+    # results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in filtered]
     # ret = json.dumps(results).__str__()
-    return HttpResponse(results)
+    return HttpResponse(film[0].as_json().__str__())
 
 def getFilmByCountry(request, country):
-    filtered = Film.objects.filter(country__name=country).exclude(poster_link__isnull=True)[:10]
-    results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in filtered]
-    return HttpResponse(results)
+    filtered = Film.objects.filter(country__name=country).exclude(poster_link__isnull=True)[10:20]
+    results = [ob.as_json().__str__() for ob in filtered]
+    return HttpResponse(json.dumps(results))
 
 def getFilmsByActor(request, actor_name):
     try:
         actor = Actor.objects.get(name=actor_name)
         films = actor.film_set.all()
-        results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in films]
+        results = [ob.as_json().__str__() for ob in films]
         return HttpResponse(results)
     except Actor.DoesNotExist:
         return HttpResponse("{response:False}")
@@ -46,7 +46,7 @@ def getFilmsByDirector(request, director_name):
     try:
         director = Director.objects.get(name=director_name)
         films = director.film_set.all()
-        results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in films]
+        results = [ob.as_json().__str__() for ob in films]
         return HttpResponse(results)
     except Actor.DoesNotExist:
         return HttpResponse("{response:False}")
@@ -56,7 +56,7 @@ def getFilmsByCountry(request, country_name):
     try:
         country = Country.objects.get(name=country_name)
         films = country.film_set.all()
-        results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in films]
+        results = [ob.as_json().__str__() for ob in films]
         return HttpResponse(results)
     except Actor.DoesNotExist:
         return HttpResponse("{response:False}")
@@ -64,7 +64,7 @@ def getFilmsByCountry(request, country_name):
 def getFilmsByYear(request, year):
     try:
         films = Film.objects.filter(year = int(year))
-        results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in films]
+        results = [ob.as_json().__str__() for ob in films]
         return HttpResponse(results)
     except Actor.DoesNotExist:
         return HttpResponse("{response:False}")
@@ -133,6 +133,19 @@ def getAllComments(request):
     results = [ob.as_json() for ob in comm]
     return HttpResponse(json.dumps(results))
 
+def getAllCommentsForFilm(request):
+    if request.method != 'GET':
+        return HttpResponse("fail")
+    ret = checkFilm(request)
+    if ret is not True:
+        return ret
+    _film = Film.objects.get(pk=request.GET.get("film"))
+    comments = Comment.objects.filter(film = _film)
+    # results = [serializers.serialize('json', [ob, ], use_natural_keys=True) for ob in comm]
+
+    results = [ob.as_json() for ob in comments]
+    return HttpResponse(json.dumps(results))
+
 def checkGET(request):
     if request.method != 'GET':
         return HttpResponse("fail")
@@ -169,7 +182,7 @@ def addComment(request):
     if ret is not True:
         return ret
     _user = MyUser.objects.get(name=request.GET.get("user"))
-    _film = viewsUtil.getFilm(request.GET.get("pk"))
+    _film = viewsUtil.getFilmByPK(request.GET.get("pk"))
     comm = Comment(user=_user,film = _film, comment = request.GET.get("comment"), timestamp = int(round(time.time() * 1000)))
     comm.save()
     return HttpResponse("OK")
@@ -263,7 +276,8 @@ def getAllCommentsByFriends(request):
     friends = _user.friends.all()
     result = []
     for friend in friends:
-        result.append([ob.as_json() for ob in friend.comment_set.all()])
+        for ob in friend.comment_set.all():
+            result.append(ob.as_json())
     return HttpResponse(json.dumps(result))
 
 def getAllRatingByFriends(request):
@@ -298,9 +312,56 @@ def setRatingRequest(request):
     setRaiting(_user,_film,_value)
     return HttpResponse("OK")
 
+def getFilmSmartRequest(request):
+    ret = checkGET(request)
+    if ret is not True:
+        return ret
 
+    pk = request.GET.get("pk")
+    if(pk is not None):
+        film = []
+        film.append(getFilmByPK(pk))
+        results = [ob.as_json().__str__() for ob in film]
+        return HttpResponse(json.dumps(results))
 
+def getMyEstimateForFilmRequest(request):
+    ret = checkGET(request)
+    if ret is not True:
+        return ret
+    ret = checkUser(request)
+    if ret is not True:
+        return ret
+    ret = checkFilm(request)
+    if ret is not True:
+        return ret
+    _user = MyUser.objects.get(name=request.GET.get("user"))
+    _film = Film.objects.get(pk=request.GET.get("film"))
+    est = MyRating.objects.filter(film=_film, user=_user)
+    if len(est)==0 :
+        d= dict(
+             num = _film.estim_num,
+             mid = _film.estim_mid
+        )
+        return HttpResponse(d.__str__())
+    d= dict(
+             num = _film.estim_num,
+             mid = _film.estim_mid,
+             my = est[0].value.values
+    )
+    return HttpResponse(d.__str__())
 
+def getEstimateForFilmRequest(request):
+    ret = checkGET(request)
+    if ret is not True:
+        return ret
 
+    ret = checkFilm(request)
+    if ret is not True:
+        return ret
 
-
+    _film = Film.objects.get(pk=request.GET.get("film"))
+    d= dict(
+        num = _film.estim_num,
+        mid = _film.estim_mid
+    )
+    return HttpResponse(d.__str__())

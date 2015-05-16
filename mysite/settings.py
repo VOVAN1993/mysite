@@ -41,9 +41,9 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'registration',
     'novajoy',
-    'dashaFilms'
-    # 'djcelery',
-    # 'kombu.transport.django',
+    'dashaFilms',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,7 +65,11 @@ LANGUAGE_CODE = 'ru-RU'
 USE_I18N = True
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'cska631@gmail.com'
+EMAIL_HOST_PASSWORD = 'Dodiplomanow!'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 # Database
 
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

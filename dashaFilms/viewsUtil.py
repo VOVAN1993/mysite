@@ -57,7 +57,7 @@ def getCountries(countries):
             returnCountries.append(Country.objects.get(name=country))
     return returnCountries
 
-def getFilm(_pk):
+def getFilmByPK(_pk):
     try:
         return Film.objects.get(pk = _pk)
     except Film.DoesNotExist:
@@ -83,16 +83,20 @@ def createFilm(dbName, dbName_rus, dbTitle, dbTitle_rus, dbTime, dbYear, dbImbdR
     film.save()
 
 def check_and_unlikeComment(user, _pk):
-    if len(user.likedComments.filter(pk=_pk))==1:
+    if len(user.likedComments.filter(pk=_pk))>0:
         com = user.likedComments.get(pk=_pk)
         com.like-=1
+        com.save()
         user.likedComments.remove(com)
+        user.save()
 
 def check_and_undislikeComment(user, _pk):
-    if len(user.dislikedComments.filter(pk=_pk))==1:
+    if len(user.dislikedComments.filter(pk=_pk))>0:
         com = user.dislikedComments.get(pk=_pk)
         com.dislike-=1
+        com.save()
         user.dislikedComments.remove(com)
+        user.save()
 
 def setRaiting(_user,_film,_value):
     ratings = MyRating.objects.filter(user = _user)
@@ -101,7 +105,10 @@ def setRaiting(_user,_film,_value):
             rating.delete()
             summ = _film.estim_num*_film.estim_mid
             _film.estim_num-=1
-            _film.estim_mid= (summ-int(rating.value.values))/_film.estim_num
+            if _film.estim_num == 0 :
+                _film.estim_mid = 0
+            else:
+                _film.estim_mid= (summ-int(rating.value.values))/_film.estim_num
             break
 
     r = MyRating(value = _value, user = _user, film = _film, timestamp = int(round(time.time() * 1000)))

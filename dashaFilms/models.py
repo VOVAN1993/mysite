@@ -68,6 +68,25 @@ class Film(models.Model):
     actors = models.ManyToManyField(Actor,null=True)
     genres = models.ManyToManyField(Genre,null=True)
 
+    def as_json(self):
+        return dict(
+            name = self.name,
+            name_rus = self.name_rus,
+            title = self.title,
+            title_rus = self.title_rus,
+            time = self.time,
+            year = self.year,
+            imbdRating = self.imbdRating,
+            estim_mid = self.estim_mid,
+            estim_num = self.estim_num,
+            pk = self.pk,
+            poster_link = self.poster_link,
+            country = [country.name for country in self.country.all()],
+            directors = [director.name for director in self.directors.all()],
+            actors = [actor.name for actor in self.actors.all()],
+            genres = [genre.name for genre in self.genres.all()],
+        )
+
     def __unicode__(self):
         return self.name
 
@@ -114,7 +133,9 @@ class MyRating(models.Model):
 
     def as_json(self):
         return dict(pk=self.pk, users = self.user.name,
-                    film = self.film.name, film_id = self.film.pk, value = str(self.value),
+                    film = self.film.name, film_id = self.film.pk, film_poster = self.film.poster_link,
+                    film_num = self.film.estim_num, film_mid= self.film.estim_mid,
+                    value = str(self.value),
                     timestamp = self.timestamp.__str__())
 
 class Comment(models.Model):
@@ -133,5 +154,7 @@ class Comment(models.Model):
 
     def as_json(self):
         return dict(pk=self.pk, users = self.user.name, comment = self.comment,
-                    film = self.film.name, film_id = self.film.pk, cd = self.dislike,cl=self.like,
+                    film = self.film.name, film_id = self.film.pk, film_poster = self.film.poster_link,
+                    film_rus = self.film.name_rus,
+                    cd = self.dislike,cl=self.like,
                     timestamp = self.timestamp.__str__())

@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^addUser/$', addUser),
     url(r'^getAllFriend/$', getAllFriend),
     url(r'^getAllComments/$', getAllComments),
+    url(r'^getAllCommentsForFilm/$', getAllCommentsForFilm),
     url(r'^addComment/$', addComment),
     url(r'^likeComment/$', likeCommentReuest),
     url(r'^dislikeComment/$', dislikeCommentReuest),
@@ -30,6 +31,9 @@ urlpatterns = patterns('',
     url(r'^getAllCommentsByFriends/$', getAllCommentsByFriends),
     url(r'^getAllRatingByFriends/$', getAllRatingByFriends),
     url(r'^setRating/$', setRatingRequest),
+    url(r'^getFilmSmart/$', getFilmSmartRequest),
+    url(r'^getMyEstimateForFilm/$', getMyEstimateForFilmRequest),
+    url(r'^getEstimateForFilm/$', getEstimateForFilmRequest),
 
 
 
